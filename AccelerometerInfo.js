@@ -24,6 +24,65 @@ if(typeof window.Widget.Device.AccelerometerInfo == 'undefined'){
 	 */
 	window.Widget.Device.AccelerometerInfo = (function(){
 		
+		var mouseArea;
+		
+		/**
+		 * returns HTML object which will be an area for moving mouse pointer
+		 * moving around it will change accelerometer readings
+		 * 
+		 *  - it will first check for WAC_MOCK_ACCELERATION_AREA variable, if it's 
+		 * defined it will be returned
+		 * - than it will try to find object with id = wacMockAccelerationArea
+		 * - falling back it will return reference to <body>
+		 * 
+		 * @method getMouseMoveArea
+		 * @private
+		 * @return {Object}
+		 */
+		function getMouseMoveArea(){
+			
+			if(typeof WAC_MOCK_ACCELERATION_AREA == 'object'){
+				return WAC_MOCK_ACCELERATION_AREA;
+			}
+			
+			if(document.getElementById('wacMockAccelerationArea') != null){
+				return document.getElementById('wacMockAccelerationArea');
+			}
+			
+			return document.body;
+		}
+		
+		/**
+		 * event handler for moving mouse around selected area
+		 * it will change readings of two axes: X and Y 
+		 * @method onMouseMove
+		 * @param {MouseEvent} e
+		 * @private
+		 */
+		function onMouseMove(e){
+			var maxX = mouseArea.clientWidth,
+                maxY = mouseArea.clientHeight;
+            
+			window.status = [maxX,maxY,e.clientX,e.clientY].join(',');
+			
+            Widget.Device.AccelerometerInfo.xAxis = -(((e.clientX * 9.82) / maxX));
+            Widget.Device.AccelerometerInfo.yAxis = ((e.clientY * 9.82) / maxY);
+			Widget.Device.AccelerometerInfo.zAxis = 0;
+		}
+		
+		/**
+		 * initiates event listeners
+		 * @method init
+		 * @private
+		 */
+		function init(){
+			
+			mouseArea = getMouseMoveArea();
+			mouseArea.addEventListener('mousemove',onMouseMove,false);
+		}
+		
+		window.addEventListener('load',init,false);
+
 		return {
 			/**
 		     * The value of the x-axis, which is positive to the right of the device and negative to the left.
