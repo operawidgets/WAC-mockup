@@ -24,7 +24,8 @@ if(typeof window.Widget.Device.AccelerometerInfo == 'undefined'){
 	 */
 	window.Widget.Device.AccelerometerInfo = (function(){
 		
-		var mouseArea;
+		var mouseArea,
+		    G = 9.82;
 		
 		/**
 		 * returns HTML object which will be an area for moving mouse pointer
@@ -63,10 +64,8 @@ if(typeof window.Widget.Device.AccelerometerInfo == 'undefined'){
 			var maxX = mouseArea.clientWidth,
                 maxY = mouseArea.clientHeight;
             
-			window.status = [maxX,maxY,e.clientX,e.clientY].join(',');
-			
-            Widget.Device.AccelerometerInfo.xAxis = -(((e.clientX * 9.82) / maxX));
-            Widget.Device.AccelerometerInfo.yAxis = ((e.clientY * 9.82) / maxY);
+            Widget.Device.AccelerometerInfo.xAxis = -(((e.clientX * 2*G) / maxX)-G);
+            Widget.Device.AccelerometerInfo.yAxis = ((e.clientY * 2*G) / maxY)-G;
 			Widget.Device.AccelerometerInfo.zAxis = 0;
 		}
 		
@@ -76,7 +75,6 @@ if(typeof window.Widget.Device.AccelerometerInfo == 'undefined'){
 		 * @private
 		 */
 		function init(){
-			
 			mouseArea = getMouseMoveArea();
 			mouseArea.addEventListener('mousemove',onMouseMove,false);
 		}
