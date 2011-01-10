@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+    <!-- WAC mockup, correct order is important -->
+	<script type="text/javascript" src="Widget.js"></script>
+	<script type="text/javascript" src="Device.js"></script>
+	<script type="text/javascript" src="DeviceStateInfo.js"></script>
+	<script type="text/javascript" src="PositionInfo.js"></script>
+	<script type="text/javascript" src="AccelerometerInfo.js"></script>
+	<script type="text/javascript" src="Multimedia.js"></script>
+	<script type="text/javascript" src="Camera.js"></script>
+	
+	<style type="text/css">
+		#gallery {
+			height: 200px; 
+			overflow-x: auto;
+			white-space: nowrap;
+		}
+		
+		#gallery img {
+			border: 1px solid black;
+			margin: 2px;
+			height: 180px;
+		}
+		
+	</style>
+</head>
+<body>
+	<!-- GPS -->
+    <h1>My position</h1>
+    <p>Longitude: <span id="longitude"></span></p>
+    <p>Latitude: <span id="latitude"></span></p>
+    
+    <script type="text/javascript">
+        
+		Widget.Device.DeviceStateInfo.onPositionRetrieved = function(location, method){
+			
+			document.getElementById('longitude').textContent = location.longitude;
+			document.getElementById('latitude').textContent = location.latitude;
+			
+			//request for new position right after retriving current position
+			Widget.Device.DeviceStateInfo.requestPositionInfo('gps');
+		}
+		
+		Widget.Device.DeviceStateInfo.requestPositionInfo('gps');
+    </script>
+
+    <!-- Accelerometer -->
+    <h1>Acceleration</h1>
+    <p>xAxis: <span id="xAxis"></span></p>
+    <p>yAxis: <span id="yAxis"></span></p>
+
+    <script type="text/javascript">
+
+        setInterval(function(){
+            document.getElementById('xAxis').textContent = Widget.Device.AccelerometerInfo.xAxis;
+            document.getElementById('yAxis').textContent = Widget.Device.AccelerometerInfo.yAxis; 
+		},10);
+    </script>
+
+    <!-- CAMERA -->
+    <object width="200" height="200" id="preview"></object>
+	<button onclick="Widget.Multimedia.Camera.captureImage('file.jpeg')">Take photo!</button>
+	<div id="gallery"></div>
+	
+
+    <script>
+    	
+		window.addEventListener('load',function(){
+			
+			Widget.Multimedia.Camera.onCameraCaptured = function(filename){
+				
+				var img = document.createElement('img');
+				img.src = filename;
+				
+				document.getElementById('gallery').appendChild(img);
+			}
+			
+			Widget.Multimedia.Camera.setWindow(document.getElementById('preview'));
+		},false)
+		
+    </script>
+
+</body>
+</html>
