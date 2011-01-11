@@ -110,7 +110,14 @@ if(typeof window.Widget == 'undefined'){
 			 */
 			setPreferenceForKey: function(preference, key){
 				return window.localStorage.setItem(key, preference);
-			}
+			},
+			
+			/**
+			 * the only value not introduced in spec - to distinguish if we're using mockups or we're on a real device
+			 * @property mock
+			 * @type {Boolean}
+			 */
+			mock: true
 			
 		};
 	})();

@@ -7,7 +7,9 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 	
 	window.Widget.Multimedia.Camera = (function(){
 		
-		var previewCanvas = null;
+		var previewCanvas = null,
+		    lastPosition = [],
+			fillStyle = '';
 		
 		/**
 		 * creates a preview canvas based upon a real object
@@ -29,10 +31,26 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 		}
 		
 		/**
-		 * redraws preeview canvas i
-		 * @method performUpdate
+		 * sets random values for color and position of the box
+		 * @method randomize
 		 */
-		function performUpdate(){
+		function randomize(){
+			    var width = previewCanvas.width,
+                height = previewCanvas.height;
+			
+			//random color
+			fillStyle = "rgb("+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+")";
+			
+			//random position
+			lastPosition[0] = Math.random()*width*0.8;
+            lastPosition[1] = Math.random()*height*0.8;
+		}
+		
+		/**
+		 * redraws preeview canvas i
+		 * @method redraw
+		 */
+		function redraw(){
 			var ctx = previewCanvas.getContext('2d'),
 			    width = previewCanvas.width,
 			    height = previewCanvas.height;
@@ -40,12 +58,9 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 			ctx.fillStyle = "rgb(255,255,255)";
 			ctx.fillRect(0,0,width,height);
 			
-			ctx.fillStyle = "rgb("+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+")";
-            
-			var x = Math.random()*width*0.8,
-			    y = Math.random()*height*0.8;
+			ctx.fillStyle = fillStyle;
+			ctx.fillRect (lastPosition[0], lastPosition[1], width*0.2, height*0.2);
 			
-			ctx.fillRect (x, y, width*0.2, height*0.2);
 		}
 		
 		/**
@@ -54,8 +69,9 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 		 * @private
 		 */
 		function update(){
+			randomize();
 			
-			performUpdate();
+			redraw();
 			
 			setTimeout(update, 500);
 		}
@@ -69,7 +85,9 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 			 * @return {String}
 			 */
 			captureImage: function(fileName, lowRes){
+				
 				var imageStr = previewCanvas.toDataURL('image/jpeg');
+				
 				setTimeout(function(){
 					Widget.Multimedia.Camera.onCameraCaptured(imageStr);
 				},700);
@@ -93,6 +111,7 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 				domObj.parentNode.insertBefore(previewCanvas,domObj);
 				domObj.parentNode.removeChild(domObj);
 				
+				randomize();
 				update();
 			}
 		}
