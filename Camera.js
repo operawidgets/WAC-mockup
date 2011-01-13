@@ -106,13 +106,20 @@ if(typeof window.Widget.Multimedia.Camera == 'undefined'){
 			 * @param {Object} domObj
 			 */
 			setWindow: function(domObj){
-				previewCanvas = createPreviewCanvas(domObj);
+				var updateNeeded = false;
+				
+				if (!previewCanvas) {
+					previewCanvas = createPreviewCanvas(domObj);
+					updateNeeded = true;
+				}
 				
 				domObj.parentNode.insertBefore(previewCanvas,domObj);
 				domObj.parentNode.removeChild(domObj);
 				
-				randomize();
-				update();
+				if (updateNeeded) {
+					randomize();
+					update();
+				}
 			}
 		}
 	})();
